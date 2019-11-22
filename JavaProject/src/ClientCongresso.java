@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 
+@SuppressWarnings("deprecation")
 class ClientCongresso {
 
   // Avvio del Client RMI

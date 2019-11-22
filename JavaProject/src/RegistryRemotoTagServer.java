@@ -3,5 +3,5 @@ import java.rmi.registry.Registry;
 import java.rmi.registry.RegistryHandler;
 
 public interface RegistryRemotoTagServer extends RegistryRemotoTagClient, RegistryRemotoServer{
-	public void associaTag(String nomeLogico, String tag) throws RemoteException;
+	public int associaTag(String nomeLogico, String tag) throws RemoteException;
 }

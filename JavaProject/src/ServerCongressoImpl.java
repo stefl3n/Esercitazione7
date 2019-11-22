@@ -8,6 +8,7 @@ import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+@SuppressWarnings("deprecation")
 public class ServerCongressoImpl extends UnicastRemoteObject implements ServerCongresso {
   static Programma prog[];
 

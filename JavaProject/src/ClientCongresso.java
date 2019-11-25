@@ -5,8 +5,10 @@
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
+import java.time.LocalTime;
 
 @SuppressWarnings("deprecation")
 class ClientCongresso {
@@ -44,10 +46,13 @@ class ClientCongresso {
 			String completeRemoteRegistryName = "//" + registryRemotoHost + ":" + registryRemotoPort + "/" + registryRemotoName;
 			RegistryRemotoTagClient registryRemoto = (RegistryRemotoTagClient) Naming.lookup(completeRemoteRegistryName);
 			
+// RICERCA TAG E USO DEL PRIMO DELLA LISTA
 			String[] serverNames =  registryRemoto.cercaTag(tag);
+			
+			int before= LocalTime.now().getNano();
 			ServerCongresso serverRMI = (ServerCongresso) registryRemoto.cerca(serverNames[0]);
 			
-			System.out.println("ClientRMI: Servizio \"" + tag + "\" connesso");
+			System.out.println("ClientRMI: Servizio \"" + tag + "\" connesso attraverso il server: "+ serverNames[0] );
 			
 			System.out.println("\nRichieste di servizio fino a fine file");
 			
@@ -121,6 +126,10 @@ class ClientCongresso {
 				} // P
 
 				else System.out.println("Servizio non disponibile");
+				
+				int after = LocalTime.now().getNano();
+				int diff = after-before;
+				System.out.println(diff);
 				
 				System.out.print("Servizio (R=Registrazione, P=Programma del congresso): ");
 			} // !EOF richieste utente

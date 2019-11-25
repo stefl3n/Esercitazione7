@@ -54,7 +54,7 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
 	}
 	
 	/**Associa il tag ad ogni Server che abbia il nome logico richiesto*/
-	public int associaTag(String nomeLogico, String tag) throws RemoteException {
+	public synchronized int associaTag(String nomeLogico, String tag) throws RemoteException {
 		int tagAssociati = 0;
 		if(nomeLogico==null)
 			return tagAssociati;
@@ -68,12 +68,13 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
 		if(!tagValido)
 			return tagAssociati;
 		
-		for(int i=0; i<this.tableSize; i++) {
-			if(this.table[i][0].equals(nomeLogico)) {
-				table[i][2] = tag;
-				tagAssociati++;
-			}
+		for(int i=0; i<this.tableSize && this.table[i][0]!=null; i++) {
+				if(this.table[i][0].equals(nomeLogico)) {
+					table[i][2] = tag;
+					tagAssociati++;
+				}
 		}
+		
 		return tagAssociati;
 	}
 
@@ -107,7 +108,7 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
 	}
 	
 	/**Restituisce tutti i nomiLogici corrispondenti ad un tag*/
-	public String[] cercaTag(String tag) throws RemoteException {
+	public synchronized String[] cercaTag(String tag) throws RemoteException {
 		boolean tagValido = false;
 		for(int i=0; i<this.tagsConsentiti && !tagValido; i++) {
 			if(tag.equals(tags[i]))
@@ -123,11 +124,13 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
 		
 		int j=0;
 		for(int i=0; i<this.tableSize; i++) {
-			if(table[i][0]==null && table[i][1]==null)
+			if(this.table[i][0]==null || this.table[i][1]==null)
 				return result;
-			if(table[1][2].equals(tag))
-				result[j++]=(String) table[i][0];
+			if(this.table[i][2]!=null && this.table[i][2].equals(tag)) {
+					result[j++]= table[i][0].toString();
+			}
 		}
+			
 		return result;
 	}
 

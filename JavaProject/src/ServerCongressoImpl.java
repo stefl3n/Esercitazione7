@@ -3,6 +3,7 @@
  * 		Implementazione del server
  * */
 
+import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
@@ -50,7 +51,7 @@ public class ServerCongressoImpl extends UnicastRemoteObject implements ServerCo
   }
 
   // Avvio del Server RMI
-  public static void main(String[] args) {
+  public static void main(String[] args) throws UnknownHostException {
 
     // creazione programma
     prog = new Programma[3];
@@ -90,8 +91,12 @@ public class ServerCongressoImpl extends UnicastRemoteObject implements ServerCo
     try {
       RegistryRemotoTagServer registryRemoto = (RegistryRemotoTagServer) Naming.lookup(completeRemoteRegistryName);
       ServerCongressoImpl serverRMI = new ServerCongressoImpl();
+      
+      
+//AGGIUNTA SERVER E ASSOCIAZIONE TAG
       registryRemoto.aggiungi(serviceName, serverRMI);
       registryRemoto.associaTag(serviceName, tag);
+      
       System.out.println("Server RMI: Servizio \"" + serviceName
           + "\" registrato");
     } catch (Exception e) {

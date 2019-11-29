@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
+import java.time.LocalTime;
 
 @SuppressWarnings("deprecation")
 class ClientCongresso {
@@ -45,12 +46,11 @@ class ClientCongresso {
 			String completeRemoteRegistryName = "//" + registryRemotoHost + ":" + registryRemotoPort + "/" + registryRemotoName;
 			RegistryRemotoTagClient registryRemoto = (RegistryRemotoTagClient) Naming.lookup(completeRemoteRegistryName);
 			
-// RICERCA TAG E USO DEL PRIMO DELLA LISTA
+			
 			String[] serverNames =  registryRemoto.cercaTag(tag);
 			System.out.println('\n'+serverNames[0]);
 			
-//QUI SI PUO' FARE QUALCOSA DI CARINO :)
-			serverName=serverNames[0];
+			long before = LocalTime.now().toNanoOfDay();
 			ServerCongresso serverRMI = (ServerCongresso) registryRemoto.cerca(serverNames[0]);
 			
 			System.out.println("ClientRMI: Servizio \"" + tag + "\" connesso attraverso il server: "+ serverNames[0] );
@@ -97,8 +97,7 @@ class ClientCongresso {
 
 					System.out.print("Speaker? ");
 					String speak = stdIn.readLine();
-
-					// Tutto corretto
+					
 					if (serverRMI.registrazione(g, sess, speak) == 0)
 						System.out.println("Registrazione di " + speak
 								+ " effettuata per giornata " + g + " sessione " + sess);
@@ -136,8 +135,13 @@ class ClientCongresso {
 
 				else System.out.println("Servizio non disponibile");
 				
+				long after = LocalTime.now().toNanoOfDay();
+				long diff = after-before;
+				System.out.println(diff);
+				
 				System.out.print("Servizio (R=Registrazione, P=Programma del congresso): ");
 			} // !EOF richieste utente
+			
 			registryRemoto.decrementa(serverName);
 
 		} catch (Exception e) {
@@ -145,6 +149,5 @@ class ClientCongresso {
 			e.printStackTrace();
 			System.exit(2);
 		}
-		
 	}
 }

@@ -3,6 +3,8 @@
  * 		Implementazione del server
  * */
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
@@ -92,7 +94,9 @@ public class ServerCongressoImpl extends UnicastRemoteObject implements ServerCo
       RegistryRemotoTagServer registryRemoto = (RegistryRemotoTagServer) Naming.lookup(completeRemoteRegistryName);
       ServerCongressoImpl serverRMI = new ServerCongressoImpl();
       
-      
+      System.out.println("Che nomeLogico vuoi avere?");
+      BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+      serviceName = reader.readLine();
 //AGGIUNTA SERVER E ASSOCIAZIONE TAG
       registryRemoto.aggiungi(serviceName, serverRMI);
       registryRemoto.associaTag(serviceName, tag);

@@ -117,32 +117,25 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
 	/**Restituisce tutti i nomiLogici corrispondenti ad un tag*/
 	public synchronized String[] cercaTag(String tag) throws RemoteException {
 		boolean tagValido = false;
-		Map<Integer, String> mappa = new TreeMap<Integer, String>();
+		Map<Integer, String> serversValidi = new TreeMap<Integer, String>();
 		for(int i=0; i<this.tagsConsentiti && !tagValido; i++) {
 			if(tag.equals(tags[i]))
 				tagValido = true;
 		}
 		
-		String[] result = new String[tableSize];
-		for (int i = 0; i < tableSize; i++)
-			result[i]=null;
-		
 		if(!tagValido)
-			 return (String[]) mappa.values().toArray(new String[10]);
+			 return (String[]) serversValidi.values().toArray(new String[tableSize]);
 		
-		int j=0;
 		for(int i=0; i<this.tableSize; i++) {
-			System.out.println(mappa.toString());
+			System.out.println(serversValidi.toString());
 			if(this.table[i][0]==null || this.table[i][1]==null)
-				return  mappa.values().toArray(new String[10]);
+				return  serversValidi.values().toArray(new String[tableSize]);
 			if(this.table[i][2]!=null && this.table[i][2].equals(tag)) {
-					//result[j++]= table[i][0].toString();
-				mappa.put((Integer)table[i][3],(String) table[i][0]);
+				serversValidi.put((Integer)table[i][3],(String) table[i][0]);
 			}
 		}
 		
-		return (String[]) mappa.values().toArray(new String[10]);
-		//return result;
+		return (String[]) serversValidi.values().toArray(new String[tableSize]);
 	}
 
 	/** Restituisce tutti i riferimenti corrispondenti ad un nome logico */
@@ -190,6 +183,44 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
 			}
 		return risultato;
 	}
+	
+	/**Decrementa il contatore del nomeLogico corrispondente*/
+	public void decrementa(String nomeLogico) {
+		for( int i=0; i<tableSize;i++)
+		{
+			if(nomeLogico.equals(table[i][0]))
+			{
+				table[i][3]=((Integer)table[i][3])-1;
+			}
+		}
+		return;
+		
+	}
+	
+	/**Stampa i valori attuali dei contatori di un determinato nomeLogico*/
+	public Object[][] stampaContatori(String nomeLogico) {
+		
+		Object[][] result;
+		int cnt=0;
+		for( int i=0; i<tableSize;i++)
+		{
+			if(table[i][0]!=null && nomeLogico.equals(table[i][0]))
+			{
+				cnt++;
+			}
+		}
+		result=new Object[cnt][2];
+		cnt=0;
+		for( int i=0; i<tableSize;i++)
+		{
+			if(table[i][0]!=null && nomeLogico.equals(table[i][0]))
+			{
+				result[cnt][0]=table[i][0];
+				result[cnt][1]=table[i][3];
+			}
+		}
+		return result;
+	}
 
 	// Avvio del Server RMI
 	public static void main(String[] args) {
@@ -232,41 +263,4 @@ public class RegistryRemotoTagImpl extends UnicastRemoteObject implements Regist
 			System.exit(1);
 		}
 	}
-
-	public void decrementa(String nomeLogico) {
-		for( int i=0; i<tableSize;i++)
-		{
-			if(nomeLogico.equals(table[i][0]))
-			{
-				table[i][3]=((Integer)table[i][3])-1;
-			}
-		}
-		return;
-		
-	}
-
-	public Object[][] stampaContatori(String nomeLogico) {
-		
-		Object[][] result;
-		int cnt=0;
-		for( int i=0; i<tableSize;i++)
-		{
-			if(table[i][0]!=null && nomeLogico.equals(table[i][0]))
-			{
-				cnt++;
-			}
-		}
-		result=new Object[cnt][2];
-		cnt=0;
-		for( int i=0; i<tableSize;i++)
-		{
-			if(table[i][0]!=null && nomeLogico.equals(table[i][0]))
-			{
-				result[cnt][0]=table[i][0];
-				result[cnt][1]=table[i][3];
-			}
-		}
-		return result;
-	}
-		
 }
